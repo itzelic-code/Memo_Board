@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:5.7
+    container_name: spring-mysql
+    ports:
+      - 3308:3308
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "memo_231226"
+    command:
+      - --port=3308
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - memo_network
+      
+  application:
+    container_name: memo-test
+    image: hagulu/memo
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - upload_volumes:/home/ec2-user/memo/upload
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3308/memo_231226?characterEncoding=UTF-8
+    networks:
+      - memo_network
+
+volumes:
+  upload_volumes:
+  mysql_data:
+
+networks:
+  memo_network:
